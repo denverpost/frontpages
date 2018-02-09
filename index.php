@@ -103,7 +103,6 @@ if(isset($_FILES["image"])) {
 
 					file_put_contents("frontpages.json", $newString);
 					ftp_put($conn_id, $FTP_DIRECTORY."/frontpages.json",$newString, FTP_BINARY);
-					
 					}
 				$error_out = '<div data-alert class="alert-box success">.jpg created and uploaded!</div>';
 				}
