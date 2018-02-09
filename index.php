@@ -6,6 +6,15 @@ ini_set('display_errors',1);
 
 $error_out = false;
 
+function ftp_is_dir($ftp, $dir) {
+    $pushd = ftp_pwd($ftp);
+    if ($pushd !== false && @ftp_chdir($ftp, $dir)) {
+        ftp_chdir($ftp, $pushd);   
+        return true;
+    }
+    return false;
+} 
+
 if(isset($_FILES["image"])) {
 	if ($_FILES["image"]["error"] > 0) {
 		if ( $_FILES["image"]["error"] == 4 ) {
@@ -24,16 +33,27 @@ if(isset($_FILES["image"])) {
 		$month    = $selectedDate[0];
 		$day      = $selectedDate[1];
 		$year     = $selectedDate[2];
-		$location = "/".$year."/".$month."/";                 // location the file will be put into
-		$_FILES["image"]["name"] = $year."-".$month."-".$day; // rename the file to today's date
+		// location the file will be put into
+		$location = "/".$year."/".$month."/";
+		// rename the file to today's date
+		$_FILES["image"]["name"] = $year."-".$month."-".$day; 
 
-		if (!file_exists($FTP_DIRECTORY."/".$year."/"))            { ftp_mkdir($conn_id, $FTP_DIRECTORY."/".$year); }            // if the year folder does not exist, create it
-		if (!file_exists($FTP_DIRECTORY."/".$year."/".$month."/")) { ftp_mkdir($conn_id, $FTP_DIRECTORY."/".$year."/".$month); } // if the month folder does not exist, create it
+		if (!ftp_is_dir($conn_id, $FTP_DIRECTORY."/".$year."/")) {
+			// if the year folder does not exist, create it
+			ftp_mkdir($conn_id, $FTP_DIRECTORY."/".$year);
+		} 
+		if (!ftp_is_dir($conn_id, $FTP_DIRECTORY."/".$year."/".$month."/")) {
+			// if the month folder does not exist, create it
+			ftp_mkdir($conn_id, $FTP_DIRECTORY."/".$year."/".$month);
+		}
 		
-		if (($_FILES["image"]["type"]=="application/pdf")||($_FILES["image"]["type"]=="image/jpeg")) {
+		if (($_FILES["image"]["type"]=="application/pdf") || ($_FILES["image"]["type"]=="image/jpeg")) {
 			$extension = ".pdf";
-			if($_FILES["image"]["type"]=="image/jpeg") { $extension = "-original.jpg"; }
-			move_uploaded_file($_FILES["image"]["tmp_name"], $_FILES["image"]["name"].$extension); // drop original file in current folder for imagick to use
+			if($_FILES["image"]["type"]=="image/jpeg") {
+				$extension = "-original.jpg";
+			}
+			// drop original file in current folder for imagick to use
+			move_uploaded_file($_FILES["image"]["tmp_name"], $_FILES["image"]["name"].$extension); 
 			$im = new imagick();
 			$im->setResolution(72,72);
 			$im->readimage($_FILES["image"]["name"].$extension);
