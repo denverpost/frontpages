@@ -13,9 +13,12 @@ function ftp_is_dir($ftp, $dir) {
         return true;
     }
     return false;
-} 
+}
 
-if(isset($_FILES["image"])) {
+if(empty($_FILES) && empty($_POST) && isset($_SERVER['REQUEST_METHOD']) && strtolower($_SERVER['REQUEST_METHOD']) == 'post'){ // catch file overload error...
+        $postMax = ini_get('post_max_size'); //grab the size limits...
+        $error_out = '<div data-alert class="alert-box warning">Your file exceeded the maximum filesize of ' . $postMax . '. Please optimize the PDF using Acrobat or Smallpdf (linked below) and try again.</div>';
+} else if(isset($_FILES["image"])) {
 	if ($_FILES["image"]["error"] > 0) {
 		if ( $_FILES["image"]["error"] == 4 ) {
 			// No image file was uploaded
