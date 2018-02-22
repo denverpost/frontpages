@@ -250,8 +250,7 @@ if(isset($_FILES["image"])) {
 				        <div class="large-12 columns">
 							<div id="uploadHere">
 								<h5>Image to upload:</h5> <input name="image" type="file">
-								<p class="grey"><em>This should the <strong>unlocked</strong> PDF from dp_stor.</em></p>
-								<p class="grey"><em>If the PDF file is too large, you can <a href="https://smallpdf.com/compress-pdf">use Smallpdf to optimize it</a> before uploading!</em></p>
+								<p class="grey"><em>This should the <strong>unlocked</strong> PDF from dp_stor. If the PDF file is too large, you can <a href="https://smallpdf.com/compress-pdf">use Smallpdf to optimize it</a> before uploading!</em></p>
 							</div>
 						</div>
 					</div>
