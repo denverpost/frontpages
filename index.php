@@ -30,6 +30,7 @@ if(empty($_FILES) && empty($_POST) && isset($_SERVER['REQUEST_METHOD']) && strto
 			$error_out = '<div data-alert class="alert-box warning">Error Code: ' . $_FILES["image"]["error"] . '</div>';
 		}
 	} else {
+		// FTP credentials stored in non-repo file
 		require('constants.php');
 		$conn_id = ftp_connect($FTP_SERVER) or die("Couldn't connect to $ftp_server");
 		ftp_login($conn_id,$FTP_USER_NAME,$FTP_USER_PASS);
