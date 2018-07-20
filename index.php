@@ -4,8 +4,10 @@ error_reporting( E_ALL );
 ini_set('display_startup_errors',1);
 ini_set('display_errors',1);
 
+// var to store error messages out of function scope
 $error_out = false;
 
+// Checks if a directory exists
 function ftp_is_dir($ftp, $dir) {
     $pushd = ftp_pwd($ftp);
     if ($pushd !== false && @ftp_chdir($ftp, $dir)) {
@@ -64,13 +66,13 @@ if(empty($_FILES) && empty($_POST) && isset($_SERVER['REQUEST_METHOD']) && strto
 			$im->scaleImage(350,0);
 			$im->writeImage($_FILES["image"]["name"].".jpg"); // Create the smaller jpg version in current folder
 			$im->clear();
-
+			// FTP the thumbnail and PDF to Extras
 			if (ftp_put($conn_id, $FTP_DIRECTORY.$location.$_FILES["image"]["name"].$extension, $_FILES["image"]["name"].$extension, FTP_BINARY)) {
 				$error_out = '<div data-alert class="alert-box success">Original file uploaded!</div>';
 				}
 			else { $error_out = '<div data-alert class="alert-box alert">ERROR: The original file failed to upload!</div>'; }
 			if (ftp_put($conn_id, $FTP_DIRECTORY.$location.$_FILES["image"]["name"].".jpg", $_FILES["image"]["name"].".jpg", FTP_BINARY)) {
-				
+				// Adds the date and image URLs to the JSNO file that's pushed to extras
 				$filename = '"'.$_FILES["image"]["name"].'"';
 				$json_a = explode("[", file_get_contents("frontpages.json"));
 				$json_b = explode("]", $json_a[1]);
@@ -95,7 +97,7 @@ if(empty($_FILES) && empty($_POST) && isset($_SERVER['REQUEST_METHOD']) && strto
 								}
 							}
 						}
-
+					// sorting and formatting the JSON
 					$newString = "frontPages({arr:[";
 					for($i=0;$i<sizeof($json_c);$i++) {
 						$newString .= $json_c[$i];
@@ -103,7 +105,7 @@ if(empty($_FILES) && empty($_POST) && isset($_SERVER['REQUEST_METHOD']) && strto
 						}
 
 					$newString .= "]})";
-
+					// Save the JSON locally and FTP it to Extras
 					file_put_contents("frontpages.json", $newString);
 					ftp_put($conn_id, $FTP_DIRECTORY."/frontpages.json", "frontpages.json", FTP_BINARY);
 					}
@@ -174,6 +176,7 @@ if(empty($_FILES) && empty($_POST) && isset($_SERVER['REQUEST_METHOD']) && strto
 		}
 	</style>
 	<script>
+		// Sets up the date field and datepicker
 		var date       = new Date();
 		var curr_year  = date.getFullYear();
 		var curr_month = date.getMonth()+1; if(curr_month<10) curr_month='0'+curr_month;
@@ -268,6 +271,7 @@ if(empty($_FILES) && empty($_POST) && isset($_SERVER['REQUEST_METHOD']) && strto
 
 <script>
 $(function(){
+	// JS for the calendar-type date picker
 	$('#datepicker').datepicker({
 		inline: true,
 		nextText: '&rarr;',
